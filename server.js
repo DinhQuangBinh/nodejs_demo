@@ -53,13 +53,9 @@ activeMQ.connect('user', 'password', function(frame) {
 /*****************Job Scheduler*******************/
 var CronJob = require('cron').CronJob;
 var job = new CronJob({
-  cronTime: '00 30 11 * * 1-5',
+  cronTime: '1 * * * * *',
   onTick: function() {
-    /*
-     * Runs every weekday (Monday through Friday)
-     * at 11:30:00 AM. It does not run on Saturday
-     * or Sunday.
-     */
+      console.log('You will see this message every second');
   },
   start: true,
   timeZone: 'Asia/Ho_Chi_Minh'
