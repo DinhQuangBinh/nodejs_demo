@@ -3,7 +3,7 @@ var itemController = require('../server/controllers/items-controller');
 
 module.exports=function(express,app,controllers){
     app.get('/', function (req, res) {
-      res.sendfile('D:/nodejs/mean-demo-master/client/views/index.html');
+      res.sendfile('client/views/index.html');
     });
 
     app.use('/js', express.static(__dirname + '/client/js'));
