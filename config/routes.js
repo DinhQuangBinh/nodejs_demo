@@ -43,7 +43,7 @@ module.exports=function(express,app,controllers){
         var token = req.body.token;
         var geo = req.body.geo;
 
-        res.json(req.headers);
-        //res.send(user_id + ' ' + token + ' ' + geo);
+        //res.json(req.headers);
+        res.send(user_id + ' ' + token + ' ' + geo);
     });
 }

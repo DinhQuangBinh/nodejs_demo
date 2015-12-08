@@ -3,7 +3,7 @@ var express           = require('express'),
     bodyParser        = require('body-parser'),
     mongoose          = require('mongoose'),
     mysql             = require('mysql'),
-    connections        = require('express-myconnection'),
+    connections       = require('express-myconnection'),
     meetupsController = require('./server/controllers/meetups-controller'),
     mc = require('mc'),
     Stomp = require('stompjs');
@@ -76,19 +76,18 @@ app.use(
 );
 /*****************************************/
 
-
+app.use(bodyParser());
 /*****************route*******************/
 var routes=require(__dirname + '/config/routes')(express,app);
 //app.use(app.router);
 /*****************************************/
+
 app.use(express.static(__dirname + '/public'));
 
 app.use(function(req,res){
 		res.status(400);
 		res.send('Page Not Found');
 	});
-
-app.use(bodyParser());
 
 app.listen(3000, function() {
   console.log('I\'m Listening...');
