@@ -1,14 +1,21 @@
 var express           = require('express'),
     app               = express(),
     bodyParser        = require('body-parser'),
-    mongoose          = require('mongoose'),
-    mysql             = require('mysql'),
-    connections       = require('express-myconnection'),
+    ipfilter          = require('express-ipfilter'),
     meetupsController = require('./server/controllers/meetups-controller'),
     mc = require('mc'),
-    Stomp = require('stompjs');
+    Stomp = require('stompjs'),
+    CronJob = require('cron').CronJob;
 
-mongoose.connect('mongodb://localhost:27017/mean-demo');
+/*****************Database*******************/
+var routes=require(__dirname + '/config/database')(app);
+/*****************************************/
+
+// Whitelist the following IPs 
+var ips = ['127.0.0.1'];
+ 
+// Create the server 
+app.use(ipfilter(ips, {mode: 'deny'}));
 
 /*****************memCache*******************/
 var client = new mc.Client(['127.0.0.1'], null, mc.Strategy.hash);
@@ -28,52 +35,36 @@ client.connect(function() {
 /*****************************************/
 
 
-/*****************activeMQ*******************/
-// Use raw TCP sockets
-var activeMQ = Stomp.overTCP('localhost', 61613);
-// uncomment to print out the STOMP frames
-// client.debug = console.log;
-
-activeMQ.connect('user', 'password', function(frame) {
-  console.log('connected to Stomp');
-
-  activeMQ.subscribe('/queue/myqueue', function(message) {
-    console.log("received message " + message.body);
-
-    // once we get a message, the client disconnects
-    activeMQ.disconnect();
-  });
-  
-  console.log ('sending a message');
-  activeMQ.send('/queue/myqueue', {}, 'Hello, node.js!');
-});
-/*****************************************/
-
-
 /*****************Job Scheduler*******************/
-var CronJob = require('cron').CronJob;
 var job = new CronJob({
   cronTime: '1 * * * * *',
   onTick: function() {
       console.log('You will see this message every second');
+        /*****************activeMQ*******************/
+        // Use raw TCP sockets
+        var activeMQ = Stomp.overTCP('localhost', 61613);
+        // uncomment to print out the STOMP frames
+        // client.debug = console.log;
+
+        activeMQ.connect('user', 'password', function(frame) {
+          console.log('connected to Stomp');
+
+          activeMQ.subscribe('/queue/myqueue', function(message) {
+            console.log("received message " + message.body);
+
+            // once we get a message, the client disconnects
+            activeMQ.disconnect();
+          });
+
+          console.log ('sending a message');
+          activeMQ.send('/queue/myqueue', {}, 'Hello, node.js!');
+        });
+        /*****************************************/
   },
   start: true,
   timeZone: 'Asia/Ho_Chi_Minh'
 });
 job.start(); 
-/*****************************************/
-
-
-/*****************mysql connection*******************/
-app.use(
-	connections(mysql,{
-		host: '172.30.1.13',
-		user: 'nahi_dev',
-		password : 'nahi_dev123',
-		port : 3306,
-		database:'nahi_sg_prod'
-	},'request')
-);
 /*****************************************/
 
 app.use(bodyParser());
