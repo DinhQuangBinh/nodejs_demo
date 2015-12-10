@@ -11,7 +11,7 @@ app.controller('meetupsController', ['$scope', '$resource', function ($scope, $r
     var meetup = new Meetup();
     meetup.name = $scope.meetupName;
     meetup.value = 'abc';  
-    meetup.$save(function (result) {
+    meetup.save(function (result) {
       $scope.meetups.push(result);
       $scope.meetupName = '';
     });

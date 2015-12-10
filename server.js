@@ -1,21 +1,17 @@
 var express           = require('express'),
     app               = express(),
     bodyParser        = require('body-parser'),
-    ipfilter          = require('express-ipfilter'),
     meetupsController = require('./server/controllers/meetups-controller'),
     mc = require('mc'),
-    Stomp = require('stompjs'),
-    CronJob = require('cron').CronJob;
+    Stomp = require('stompjs');
 
 /*****************Database*******************/
-var routes=require(__dirname + '/config/database')(app);
+var db = require(__dirname + '/config/database')(app);
 /*****************************************/
 
-// Whitelist the following IPs 
-var ips = ['127.0.0.1'];
- 
-// Create the server 
-app.use(ipfilter(ips, {mode: 'deny'}));
+/*****************Private Interface*******************/
+var private = require(__dirname + '/config/private')(app);
+/*****************************************/
 
 /*****************memCache*******************/
 var client = new mc.Client(['127.0.0.1'], null, mc.Strategy.hash);
@@ -36,35 +32,7 @@ client.connect(function() {
 
 
 /*****************Job Scheduler*******************/
-var job = new CronJob({
-  cronTime: '1 * * * * *',
-  onTick: function() {
-      console.log('You will see this message every second');
-        /*****************activeMQ*******************/
-        // Use raw TCP sockets
-        var activeMQ = Stomp.overTCP('localhost', 61613);
-        // uncomment to print out the STOMP frames
-        // client.debug = console.log;
-
-        activeMQ.connect('user', 'password', function(frame) {
-          console.log('connected to Stomp');
-
-          activeMQ.subscribe('/queue/myqueue', function(message) {
-            console.log("received message " + message.body);
-
-            // once we get a message, the client disconnects
-            activeMQ.disconnect();
-          });
-
-          console.log ('sending a message');
-          activeMQ.send('/queue/myqueue', {}, 'Hello, node.js!');
-        });
-        /*****************************************/
-  },
-  start: true,
-  timeZone: 'Asia/Ho_Chi_Minh'
-});
-job.start(); 
+var cron = require(__dirname + '/config/cron');
 /*****************************************/
 
 app.use(bodyParser());
