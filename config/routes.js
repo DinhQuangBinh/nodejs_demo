@@ -12,6 +12,7 @@ module.exports=function(express,app,controllers){
     app.get('/api/meetups', meetupsController.list);
     app.post('/api/meetups', meetupsController.create);
     app.get('/api/item', itemController.list);
+    app.post('/api/item', itemController.create);
     app.post('/api/module', function(req, res) {
         var name = req.body.name;
         var image = req.body.image;

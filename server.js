@@ -2,8 +2,7 @@ var express           = require('express'),
     app               = express(),
     bodyParser        = require('body-parser'),
     meetupsController = require('./server/controllers/meetups-controller'),
-    mc = require('mc'),
-    Stomp = require('stompjs');
+    mc = require('mc');
 
 /*****************Database*******************/
 var db = require(__dirname + '/config/database')(app);
@@ -30,13 +29,12 @@ client.connect(function() {
  });
 /*****************************************/
 
-
 /*****************Job Scheduler*******************/
 var cron = require(__dirname + '/config/cron');
 /*****************************************/
 
 app.use(bodyParser());
-/*****************route*******************/
+/*****************Route*******************/
 var routes=require(__dirname + '/config/routes')(express,app);
 //app.use(app.router);
 /*****************************************/
