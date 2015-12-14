@@ -7,7 +7,7 @@ var pool = mysql.createPool({
       user     : 'nahi_dev',
       password : 'nahi_dev123',
       database : 'nodejs_demo',
-      port     : 3307,
+      port     : 3306,
       multipleStatements: true
     });
 
@@ -15,13 +15,15 @@ module.exports.list = function (req, res) {
     //var limit = req.query.limit;
     //console.log(limit);
     pool.getConnection(function(err, connection) {
-        connection.query('SELECT * FROM items limit 0,10',function(err,rows){
-          if(err) throw err;
-
-          console.log('Data received from Db:\n');
-          //console.log(rows);
-          res.json(rows);
-        });
+        if(err) {
+            console.log(err);
+            res.send(err);
+        } else {
+            var sql_text = "SELECT * FROM items limit 0,10";
+            connection.query(sql_text,function(err,rows){
+                res.json(rows);
+            });
+        }
     });
     
     /*Item.find({}, function (err, results) {
