@@ -21,7 +21,9 @@ module.exports.list = function (req, res) {
         } else {
             var sql_text = "SELECT * FROM items limit 0,10";
             connection.query(sql_text,function(err,rows){
-                res.json(rows);
+                var result  = [];
+                result.push({status: '1000', message: 'OK', data: rows});
+                res.json(result);
             });
         }
     });
@@ -54,23 +56,22 @@ module.exports.create = function (req, res) {
 
                     //console.log('Data received from Db:\n');
                     //console.log(rows);
-                    res.json(rows);
+                    var result  = [];
+                    result.push({status: '1000', message: 'OK', data: rows});
+                    res.json(result);
                     //res.end();
                 });
             }
-
-
         });
     }
     
     else
     {
-        res.send('number không được rỗng');
+        var result  = [];
+        result.push({status: '1001', message: 'number không được rỗng'});
+        res.json(result);
     }
 
-    
-    
-    
     /*Item.find({}, function (err, results) {
       //var sys = req.params.sys;
       //res.send(sys);
