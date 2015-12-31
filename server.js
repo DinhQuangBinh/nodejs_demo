@@ -5,7 +5,7 @@ var express           = require('express'),
     mc = require('mc');
 
 /*****************Database*******************/
-var db = require(__dirname + '/config/database')(app);
+require(__dirname + '/config/database');
 /*****************************************/
 
 /*****************Private Interface*******************/
@@ -30,7 +30,7 @@ client.connect(function() {
 /*****************************************/
 
 /*****************Job Scheduler*******************/
-var cron = require(__dirname + '/config/cron');
+require(__dirname + '/config/cron');
 /*****************************************/
 
 app.use(bodyParser());

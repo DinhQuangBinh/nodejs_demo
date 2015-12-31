@@ -1,7 +1,18 @@
 var CronJob = require('cron').CronJob,
-    Stomp   = require('stompjs');
+    Stomp   = require('stompjs'),
+    mysql           = require('mysql');
+
+/*****************Database*******************/
+//console.log(__dirname + '/database.js');
+//require(__dirname + '/database');
+var database = require(__dirname + '/database');
+/*****************************************/
+/*****************************************/
+
+/*****************mysql*******************/
+
 var job = new CronJob({
-  cronTime: '1 * * * * *',
+  cronTime: '* * * * * *',
   onTick: function() {
       console.log('You will see this message every second');
         /*****************activeMQ*******************/
@@ -30,27 +41,14 @@ var job = new CronJob({
 });
 job.start();
 
-/*****************mysql*******************/
-var mysql = require('mysql');
-    
-var pool = mysql.createPool({
-      host     : '172.30.1.13',
-      user     : 'nahi_dev',
-      password : 'nahi_dev123',
-      database : 'nodejs_demo',
-      port     : 3306,
-      multipleStatements: true
-    });
-/*****************************************/
-
 var job_mysql = new CronJob({
-  cronTime: '*/15 * * * * *',
+  cronTime: '* * * * * *',
   onTick: function() {
         console.log('Mysql will insert db every 15 minutes');
         var name = 'name'; 
         var number = 5000;
 
-        pool.getConnection(function(err, connection) {
+        database.mysqldbpool.getConnection(function(err, connection) {
             if(err) {
                 console.log(err);
                 res.send(err);
@@ -62,11 +60,11 @@ var job_mysql = new CronJob({
                 var time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
 
                 if(dd<10) {
-                    dd='0'+dd
+                    dd='0'+dd;
                 } 
 
                 if(mm<10) {
-                    mm='0'+mm
+                    mm='0'+mm;
                 } 
 
                 today = yyyy+'-'+mm+'-'+dd + ' ' + time;
@@ -78,9 +76,10 @@ var job_mysql = new CronJob({
                     sql_text += mysql.format(sql, [name, today]) + ";";
                 }
 
-                console.log(sql_text);
+                //console.log(sql_text);
                 connection.query(sql_text, function(err, rows){
-                console.log(rows);
+                    console.log('Write here');
+                    connection.release();
                 });
             }
         });
